@@ -2,6 +2,7 @@ package com.datamaster.survey.service.survey;
 
 import com.datamaster.survey.dao.model.Question;
 import com.datamaster.survey.dao.model.Survey;
+import com.datamaster.survey.dao.repo.QuestionRepository;
 import com.datamaster.survey.dao.repo.SurveyRepository;
 import com.datamaster.survey.dao.repo.SurveySpec;
 import com.datamaster.survey.web.dto.SurveyDTO;
@@ -23,10 +24,12 @@ import static java.util.stream.Collectors.toList;
 public class SurveyService {
 
     private final SurveyRepository surveyRepository;
+    private final QuestionRepository questionRepository;
     private final SurveyMapper surveyMapper;
 
-    public SurveyService(SurveyRepository surveyRepository, SurveyMapper surveyMapper) {
+    public SurveyService(SurveyRepository surveyRepository, QuestionRepository questionRepository, SurveyMapper surveyMapper) {
         this.surveyRepository = surveyRepository;
+        this.questionRepository = questionRepository;
         this.surveyMapper = surveyMapper;
     }
 
@@ -42,6 +45,27 @@ public class SurveyService {
     public SurveyDTO create(SurveyForm form) {
 
         Survey survey = new Survey();
+        save(form, survey);
+
+        return surveyMapper.toDto(surveyRepository.save(survey));
+    }
+
+    @Transactional
+    public SurveyDTO update(Long id, SurveyForm form) {
+
+        Survey survey = surveyRepository.findById(id).orElseThrow(() -> new RuntimeException("Not found.")); //todo make specific exception
+        questionRepository.deleteAll(survey.getQuestions());
+        save(form, survey);
+
+        return surveyMapper.toDto(surveyRepository.save(survey));
+    }
+
+    @Transactional
+    public void delete(Long id) {
+        surveyRepository.deleteById(id);
+    }
+
+    private void save(SurveyForm form, Survey survey) {
         survey.setName(form.getName());
         survey.setStart(form.getStart());
         survey.setEnd(form.getEnd());
@@ -56,7 +80,5 @@ public class SurveyService {
         }).collect(toList());
 
         survey.setQuestions(questions);
-
-        return surveyMapper.toDto(surveyRepository.save(survey));
     }
 }

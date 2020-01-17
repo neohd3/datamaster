@@ -7,6 +7,7 @@ import com.datamaster.survey.web.exception.ValidationException;
 import com.datamaster.survey.web.form.SurveyForm;
 import com.datamaster.survey.web.request.SurveyFilter;
 import com.datamaster.survey.web.response.PageableResponse;
+import com.datamaster.survey.web.response.Response;
 import com.datamaster.survey.web.response.SimpleResponse;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -47,6 +48,22 @@ public class SurveyController {
         if (result.hasErrors()) throw new ValidationException(result);
 
         return new SimpleResponse<>(surveyService.create(form));
+    }
+
+    @PostMapping(Paths.SURVEYS + "/{id}")
+    @ApiOperation(value = "Update a survey.")
+    public SimpleResponse<SurveyDTO> update(@Valid @RequestBody SurveyForm form, @PathVariable Long id, BindingResult result) {
+
+        if (result.hasErrors()) throw new ValidationException(result);
+
+        return new SimpleResponse<>(surveyService.update(id, form));
+    }
+
+    @DeleteMapping(Paths.SURVEYS + "/{id}")
+    @ApiOperation(value = "Delete a survey.")
+    public Response delete(@PathVariable Long id) {
+        surveyService.delete(id);
+        return Response.ok();
     }
 
 }
