@@ -1,0 +1,18 @@
+server:
+  port: 8080
+
+spring:
+  jackson:
+    default-property-inclusion: non_null
+    serialization:
+      write_dates_as_timestamps: false
+      write_bigdecimal_as_plain: true
+    deserialization:
+      accept_empty_array_as_null_object: true
+  datasource:
+    url: jdbc:postgresql://localhost:5432/survey_db
+    username: survey_user
+    password: survey_pwd
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQL95Dialect
