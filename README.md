@@ -19,3 +19,6 @@ java -jar ./build/libs/survey-0.0.1-SNAPSHOT.jar
 
 Example GET request:
 localhost:8080/api/surveys?page=0&size=2&sort=name,desc
+
+Swagger:
+http://localhost:8080/swagger-ui.html
